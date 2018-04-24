@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour {
 
+    [SerializeField] float rcsRotation = 180f;
+    [SerializeField] float rcsThrust = 40f;
     Rigidbody rigidBody;
     AudioSource audioSource;
-    bool musicPlay;
-    bool musicToggle;
 
 	// Use this for initialization
 	void Start () 
@@ -20,14 +20,15 @@ public class Rocket : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
-        ProcessInput();
+        Thrust();
+        Rotation();
 	}
 
-    private void ProcessInput()
+    private void Thrust()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            rigidBody.AddRelativeForce(Vector3.up);
+            rigidBody.AddRelativeForce(Vector3.up * rcsThrust);
             if (!audioSource.isPlaying)
             {
                 audioSource.Play();
@@ -37,15 +38,23 @@ public class Rocket : MonoBehaviour {
         {
             audioSource.Stop();
         }
+    }
+
+    private void Rotation()
+    {
+        rigidBody.freezeRotation = true; // take manual control of rotation
+
+        float rotationThisFrame = rcsRotation * Time.deltaTime;
 
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Rotate(Vector3.forward);
+            transform.Rotate(Vector3.forward * rotationThisFrame);
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            transform.Rotate(-Vector3.forward * rotationThisFrame);
         }
 
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.Rotate(-Vector3.forward);
-        }
+        rigidBody.freezeRotation = false; // resume physics control of rotation
     }
 }
