@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour {
 
     [SerializeField] float rcsRotation = 180f;
-    [SerializeField] float rcsThrust = 40f;
+    [SerializeField] float rcsThrust = 0f;
     Rigidbody rigidBody;
     AudioSource audioSource;
 
@@ -23,6 +21,22 @@ public class Rocket : MonoBehaviour {
         Thrust();
         Rotation();
 	}
+
+    void OnCollisionEnter(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+
+                break;
+            case "Finish":
+                SceneManager.LoadScene(1);
+                break;
+            default:
+                SceneManager.LoadScene(0);
+                break;
+        }
+    }
 
     private void Thrust()
     {
